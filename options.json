@@ -1,5 +1,5 @@
 {
-    "ip": "127.0.0.1",
-    "port": "55165",
+    "server_ip": "127.0.0.1",
+    "server_port": "16261",
     "password": "serverPassword"
 }
