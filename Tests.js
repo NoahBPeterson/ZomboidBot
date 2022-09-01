@@ -6,6 +6,7 @@ let byteErrorMessage = "BufferMessage did not read/write a byte correctly! ";
 let shortErrorMessage = "BufferMessage did not read/write a short-integer correctly! ";
 let intErrorMessage = "BufferMessage did not read/write an integer correctly! ";
 let longErrorMessage = "BufferMessage did not read/write a long correctly! ";
+let doubleErrorMessage = "BufferMessage did not read/write a double correctly! ";
 let stringErrorMessage = "BufferMessage did not read/write a string correctly! ";
 
 let testBufferMessage = new BufferMessage();
@@ -31,7 +32,8 @@ testBufferMessage
     .WriteString(string)
     .WriteString(string2)
     .WriteString(string3)
-    .WriteLong(2_147_483_638);
+    .WriteLong(2_147_483_638)
+    .WriteDouble(0.125);
 
 var readShort = testBufferMessage.ReadShort();
 var readShort2 = testBufferMessage.ReadShort();
@@ -40,6 +42,7 @@ var readString = testBufferMessage.ReadString();
 var readString2 = testBufferMessage.ReadString();
 var readString3 = testBufferMessage.ReadString();
 var readLong = testBufferMessage.ReadLong();
+var readDouble = testBufferMessage.ReadDouble();
 console.assert(readShort == 42, shortErrorMessage + JSON.stringify(readShort));
 console.assert(readShort2 == 10752, shortErrorMessage + JSON.stringify(readShort2));
 console.assert(readInt == 100_000, intErrorMessage + JSON.stringify(readInt));
@@ -47,6 +50,7 @@ console.assert(readString.includes(string), stringErrorMessage+ JSON.stringify(r
 console.assert(readString2.includes(string2), stringErrorMessage+ JSON.stringify(readString2));
 console.assert(readString3.includes(string3), stringErrorMessage+ JSON.stringify(readString3));
 console.assert(readLong == 2_147_483_638, longErrorMessage + readLong);
+console.assert(readDouble == 0.125, doubleErrorMessage + readDouble);
 
 /// Test reading/writing 8-byte longs.
 var testBufferMessageLong = new BufferMessage();
@@ -91,6 +95,17 @@ var bytes = [testBufferMessageByte.ReadByte(), testBufferMessageByte.ReadByte(),
 console.assert(bytes[0] == 120, byteErrorMessage + JSON.stringify(bytes[0]));
 console.assert(bytes[1] == -120, byteErrorMessage + JSON.stringify(bytes[1]));
 console.assert(bytes[2] == 10, byteErrorMessage + JSON.stringify(bytes[2]));
+
+/// Test reading/writing double numbers.
+var testBufferMessageDouble = new BufferMessage();
+testBufferMessageDouble
+    .WriteDouble(0.125)
+    .WriteDouble(0.03125)
+    .WriteDouble(8.03125);
+var doubles = [testBufferMessageDouble.ReadDouble(), testBufferMessageDouble.ReadDouble(), testBufferMessageDouble.ReadDouble()];
+console.assert(doubles[0] == 0.125, doubleErrorMessage + JSON.stringify(doubles[0]));
+console.assert(doubles[1] == 0.03125, doubleErrorMessage + JSON.stringify(doubles[1]));
+console.assert(doubles[2] == 8.03125, doubleErrorMessage + JSON.stringify(doubles[2]));
 
 /// Test reading/writing strings.
 var testBufferMessageString = new BufferMessage();

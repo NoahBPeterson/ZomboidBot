@@ -81,9 +81,26 @@ class BufferMessage
         else
         {
             console.assert(offset <= (this.messageBuffer.byteLength - 4), "Tried to read 4 bytes from message buffer where there isn't 4 bytes.")
-            int = this.messageBuffer.readInt32BE(offset+3);
+            int = this.messageBuffer.readInt32BE(offset);
         }
         return int;
+    }
+
+    ReadDouble(offset = -1)
+    {
+        var double = 0;
+        if (offset == -1)
+        {
+            console.assert(this.offset <= (this.messageBuffer.byteLength - 8), "Tried to read 8 bytes from message buffer where there isn't 8 bytes.")
+            double = this.messageBuffer.readDoubleBE(this.offset);
+            this.offset += 8;
+        }
+        else
+        {
+            console.assert(offset <= (this.messageBuffer.byteLength - 8), "Tried to read 8 bytes from message buffer where there isn't 8 bytes.")
+            double = this.messageBuffer.readDoubleBE(offset);
+        }
+        return double;
     }
 
     ReadLong(offset = -1)
@@ -143,6 +160,15 @@ class BufferMessage
         console.assert(int < 2147483648 && int >= -2147483648); // [-2^31, (2^31)-1]
         var buffer = Buffer.alloc(4);
         buffer.writeIntBE(int, 0, 4);
+        this.messageBuffer = Buffer.concat([this.messageBuffer, buffer]);
+        return this;
+    }
+
+    WriteDouble(double = 0)
+    {
+        console.assert(double < Number.MAX_VALUE && double >= Number.MIN_VALUE); // [-2^31, (2^31)-1]
+        var buffer = Buffer.alloc(8);
+        buffer.writeDoubleBE(double, 0, 8);
         this.messageBuffer = Buffer.concat([this.messageBuffer, buffer]);
         return this;
     }
