@@ -8,7 +8,7 @@ class PacketType
 
     toString()
     {
-        return this.name+" Packet: "+this.id;
+        return this.name+" Packet: "+this.name+", ID: "+this.id;
     }
 
     getId()
