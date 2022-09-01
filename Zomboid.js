@@ -1,7 +1,7 @@
 const { Client, PacketPriority, PacketReliability } = require('raknet-native');
 const { EventEmitter } = require('events');
-const { BufferMessage } = require('./BufferMessage.js');
-const { PacketType } = require('./PacketType.js');
+const { BufferMessage } = require('./network/BufferMessage.js');
+const { PacketType } = require('./network/PacketType.js');
 
 class ZomboidClient extends EventEmitter
 {

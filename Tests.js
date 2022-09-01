@@ -1,5 +1,5 @@
-const {BufferMessage} = require("./BufferMessage.js");
-const {PacketType} = require("./PacketType.js");
+const {BufferMessage} = require("./network/BufferMessage.js");
+const {PacketType} = require("./network/PacketType.js");
 
 let packetErrorMessage = "Packet bytes did not write correctly to the buffer.";
 let byteErrorMessage = "BufferMessage did not read/write a byte correctly! ";
