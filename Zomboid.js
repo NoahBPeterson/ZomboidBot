@@ -2,6 +2,7 @@ const { Client, PacketPriority, PacketReliability } = require('raknet-native');
 const { EventEmitter } = require('events');
 const { BufferMessage } = require('./network/BufferMessage.js');
 const { PacketType } = require('./network/PacketType.js');
+const { GameClient } = require('./GameClient.js');
 
 class ZomboidClient extends EventEmitter
 {
@@ -13,6 +14,7 @@ class ZomboidClient extends EventEmitter
       this.connected = false;
       this.connectionTries = 0;
       this.version = version;
+      this.GameClient = new GameClient();
 
       client.on("disconnect", (data) => 
       {
@@ -24,7 +26,7 @@ class ZomboidClient extends EventEmitter
           console.log("Connected: "+data.address+" "+data.guid);
           this.connected = true;
       });
-      client.on("encapsulated", (data) => console.log("Encapsulated: "+data.buffer+" "+data.address+" "+data.guid));
+      client.on("encapsulated", (data) => this.HandlePacket(new BufferMessage(data.buffer))); 
     }
 
     Login(username = "", password = "")
@@ -55,6 +57,27 @@ class ZomboidClient extends EventEmitter
         });
       }
       return this;
+    }
+
+    HandlePacket(buffer = BufferMessage)
+    {
+      //console.log("Encapsulated: "+buffer.GetMessage())
+      let packetType = buffer.ReadShort();
+      switch (packetType)
+      {
+        case PacketType.SpawnRegion.getId(): // SpawnRegion => Received immediately on Login.
+          GameClient.ReceiveSpawnRegion(buffer);
+          break;
+        case PacketType.ConnectionDetails.getId(): // ConnectionDetails => ?
+          console.log(JSON.stringify(buffer.GetMessage()));
+          break;
+        case PacketType.RequestData.getId(): // Request
+          console.log(PacketType.RequestData.name+" "+JSON.stringify(buffer.GetMessage()));
+          break;
+        default:
+          console.log("Received a packet without a handler! ID is "+packetType);
+          break;
+      }
     }
 }
 
